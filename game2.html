@@ -1,132 +1,540 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CAMPING !</title>
+    <title>Game</title>
     <link rel="icon" href="./favicon.ico" />
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&display=swap");
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-      @font-face {
-        font-family: "CookieRun-Regular";
-        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff")
-          format("woff");
-        font-weight: normal;
-        font-style: normal;
+
+      :root {
+        --sky-top: #0c1b45;
+        --sky-mid: #1e3f86;
+        --sky-low: #7fb2ec;
+        --cream: #fbf7ee;
+        --wood: #dfe7f5;
+        --fire: #ff9a52;
+        --fire-dark: #e2702a;
+        --tent: #4a90d9;
+        --tent-dark: #2f6cae;
+        --star: #ffe36b;
+        --ink: #2c3556;
+        --correct: #58c98a;
+        --correct-dark: #379966;
+        --wrong: #ff5c6c;
+        --wrong-dark: #d63c4c;
       }
+
       body {
-        font-family: "CookieRun-Regular";
-        background: linear-gradient(135deg, #2c64ff, #759aff);
+        font-family: "Jua", sans-serif;
+        color: var(--ink);
+      }
+
+      .container {
+        background: linear-gradient(
+          160deg,
+          var(--sky-top) 0%,
+          var(--sky-mid) 55%,
+          var(--sky-low) 100%
+        );
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+        padding: 24px;
       }
 
-      .word-display {
-        font-size: 8rem;
-        font-weight: bold;
-        margin-bottom: 50px;
-        padding: 80px;
-        background-color: #eef3ff;
+      /* 반짝이는 별들 */
+      .star {
+        position: fixed;
+        color: var(--star);
+        opacity: 0.9;
+        animation: twinkle 2.4s ease-in-out infinite;
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+      }
+      .star:nth-child(1) {
+        top: 12%;
+        left: 15%;
+        font-size: 1.4rem;
+        animation-delay: 0s;
+      }
+      .star:nth-child(2) {
+        top: 22%;
+        left: 78%;
+        font-size: 1rem;
+        animation-delay: 0.6s;
+      }
+      .star:nth-child(3) {
+        top: 8%;
+        left: 55%;
+        font-size: 0.9rem;
+        animation-delay: 1.1s;
+      }
+      .star:nth-child(4) {
+        top: 30%;
+        left: 35%;
+        font-size: 1.2rem;
+        animation-delay: 1.6s;
+      }
+      .star:nth-child(5) {
+        top: 15%;
+        left: 90%;
+        font-size: 0.8rem;
+        animation-delay: 0.3s;
+      }
+      .star:nth-child(6) {
+        top: 40%;
+        left: 8%;
+        font-size: 1rem;
+        animation-delay: 2s;
+      }
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.25;
+          transform: scale(0.8);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.15);
+        }
+      }
+
+      /* 상단 타이틀 */
+      .title {
+        color: var(--cream);
+        font-family: "Jua", sans-serif;
+        font-size: clamp(2.2rem, 6.5vw, 3.8rem);
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+        text-shadow: 0 3px 0 rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 2;
+      }
+
+      .screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        width: 100%;
+      }
+      .screen.hidden {
+        display: none;
+      }
+
+      /* ---------- 시작 화면 ---------- */
+      .start-card {
+        background: var(--cream);
+        border: 6px solid var(--wood);
+        border-radius: 32px;
+        padding: clamp(32px, 6vw, 56px);
+        width: min(480px, 90vw);
+        text-align: center;
+        box-shadow:
+          0 14px 0 rgba(0, 0, 0, 0.15),
+          inset 0 0 0 3px rgba(255, 255, 255, 0.6);
+        animation: pop 0.45s cubic-bezier(0.22, 1.4, 0.4, 1);
+      }
+      .field-label {
+        font-size: clamp(1rem, 2.4vw, 1.3rem);
+        margin-bottom: 12px;
+        color: var(--ink);
+      }
+      .team-input {
+        width: 100%;
+        font-family: "Jua", sans-serif;
+        font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+        padding: 14px 16px;
+        border-radius: 16px;
+        border: 4px solid var(--wood);
+        text-align: center;
+        margin-bottom: 28px;
+        background: #fff;
+        color: var(--ink);
+      }
+      .team-input:focus {
+        outline: none;
+        border-color: var(--tent);
+      }
+      .count-buttons {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .count-btn {
+        font-family: inherit;
+        font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+        padding: 18px 26px;
         border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        min-width: 400px;
+        border: none;
+        background: var(--tent);
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 7px 0 var(--tent-dark);
+        transition:
+          transform 0.08s ease,
+          box-shadow 0.08s ease;
+      }
+      .count-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 0 var(--tent-dark);
+      }
+      .count-btn:active {
+        transform: translateY(5px);
+        box-shadow: 0 2px 0 var(--tent-dark);
+      }
+
+      /* ---------- 게임 화면 ---------- */
+      .hud {
+        display: flex;
+        gap: clamp(10px, 3vw, 28px);
+        flex-wrap: wrap;
+        justify-content: center;
+        background: var(--cream);
+        border: 4px solid var(--wood);
+        border-radius: 20px;
+        padding: 10px 22px;
+        margin-bottom: 26px;
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+        box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+        z-index: 2;
+      }
+
+      /* 단어 카드 = 나무 표지판 느낌 */
+      .word-display {
+        font-size: clamp(3rem, 14vw, 8rem);
+        font-weight: bold;
+        color: var(--ink);
+        margin-bottom: 26px;
+        padding: clamp(40px, 8vw, 80px) clamp(30px, 6vw, 70px);
+        background: var(--cream);
+        border-radius: 32px;
+        border: 6px solid var(--wood);
+        box-shadow:
+          0 14px 0 rgba(0, 0, 0, 0.15),
+          inset 0 0 0 3px rgba(255, 255, 255, 0.6);
+        min-width: min(400px, 80vw);
+        text-align: center;
+        z-index: 2;
+      }
+      .word-display.pop {
+        animation: pop 0.45s cubic-bezier(0.22, 1.4, 0.4, 1);
+      }
+
+      /* O / X 버튼 - 화면 양쪽 */
+      .side-btn {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        font-family: inherit;
+        border-radius: 50%;
+        width: clamp(64px, 10vw, 96px);
+        height: clamp(64px, 10vw, 96px);
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        z-index: 3;
+        transition:
+          transform 0.08s ease,
+          box-shadow 0.08s ease;
+      }
+      .correct-btn {
+        left: clamp(12px, 4vw, 48px);
+        background: var(--correct);
+        box-shadow: 0 7px 0 var(--correct-dark);
+      }
+      .wrong-btn {
+        right: clamp(12px, 4vw, 48px);
+        background: var(--wrong);
+        box-shadow: 0 7px 0 var(--wrong-dark);
+      }
+      .side-btn:hover {
+        transform: translateY(calc(-50% - 2px));
+      }
+      .side-btn:active {
+        transform: translateY(calc(-50% + 5px));
+      }
+      .side-btn.hidden {
+        display: none;
+      }
+
+      @media (max-width: 700px) {
+        .side-btn {
+          position: static;
+          transform: none;
+          margin: 10px 10px 0;
+        }
+        .side-btn:hover,
+        .side-btn:active {
+          transform: none;
+        }
+        .game-controls {
+          display: flex;
+          justify-content: center;
+        }
+      }
+
+      /* 정답 공개 패널 */
+      .reveal-panel {
+        width: min(480px, 82vw);
+        margin-top: 22px;
+        text-align: center;
+        background: var(--cream);
+        border: 6px solid var(--wood);
+        padding: clamp(24px, 5vw, 40px) 24px;
+        border-radius: 28px;
+        box-shadow:
+          0 14px 0 rgba(0, 0, 0, 0.15),
+          inset 0 0 0 3px rgba(255, 255, 255, 0.6);
+        z-index: 2;
+        animation: pop 0.4s cubic-bezier(0.22, 1.4, 0.4, 1);
+      }
+      .reveal-panel.hidden {
+        display: none;
+      }
+      .reveal-panel.panel-correct {
+        border-color: var(--correct);
+      }
+      .reveal-panel.panel-wrong {
+        border-color: var(--wrong);
+      }
+      .reveal-result {
+        font-size: clamp(1.2rem, 3vw, 1.6rem);
+        margin-bottom: 8px;
+      }
+      .panel-correct .reveal-result {
+        color: var(--correct-dark);
+      }
+      .panel-wrong .reveal-result {
+        color: var(--wrong-dark);
+      }
+      .reveal-sub {
+        font-size: clamp(0.85rem, 1.8vw, 1rem);
+        color: #7a8299;
+        margin-bottom: 18px;
+      }
+      .continue-btn {
+        font-family: inherit;
+        font-size: clamp(1rem, 2.4vw, 1.3rem);
+        padding: 14px 26px;
+        border-radius: 18px;
+        border: none;
+        background: var(--fire);
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 6px 0 var(--fire-dark);
+      }
+      .continue-btn:hover {
+        transform: translateY(-2px);
+      }
+      .continue-btn:active {
+        transform: translateY(4px);
+        box-shadow: 0 2px 0 var(--fire-dark);
+      }
+
+      @keyframes pop {
+        0% {
+          transform: scale(0.6);
+        }
+        60% {
+          transform: scale(1.08);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* ---------- 결과 화면 ---------- */
+      .result-card {
+        background: var(--cream);
+        border: 6px solid var(--wood);
+        border-radius: 28px;
+        padding: clamp(24px, 5vw, 44px);
+        width: min(480px, 90vw);
+        text-align: center;
+        box-shadow:
+          0 14px 0 rgba(0, 0, 0, 0.15),
+          inset 0 0 0 3px rgba(255, 255, 255, 0.6);
+        margin-bottom: 20px;
+      }
+      #resultTeam {
+        font-size: clamp(1.3rem, 3vw, 1.7rem);
+        margin-bottom: 8px;
+      }
+      #resultScore {
+        font-size: clamp(1.8rem, 5vw, 2.6rem);
+        margin-bottom: 10px;
+        color: var(--tent-dark);
+      }
+      #resultDetail {
+        font-size: clamp(1rem, 2.2vw, 1.2rem);
+        color: var(--ink);
+      }
+      .result-buttons {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .leaderboard {
+        background: var(--cream);
+        border: 4px solid var(--wood);
+        border-radius: 20px;
+        padding: 18px 22px;
+        width: min(480px, 90vw);
+        box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+      }
+      .lb-title {
+        font-size: clamp(1.1rem, 2.6vw, 1.3rem);
+        margin-bottom: 10px;
         text-align: center;
       }
-
-      /* 숫자 선택 버튼 모양 */
-      .number-button {
-        font-size: 3rem;
-        padding: 35px 80px;
-        margin: 0 10px 40px 10px;
-        border-radius: 10px;
-        border: none;
-        background-color: #1976d2;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
+      .lb-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: clamp(0.9rem, 2vw, 1.05rem);
+        padding: 6px 4px;
+        border-bottom: 2px dashed var(--wood);
       }
-      .number-button:hover {
-        background-color: #115293;
+      .lb-row:last-child {
+        border-bottom: none;
       }
 
-      .next-button,
-      .restart-button {
-        position: fixed;
-        bottom: 15px;
-        right: 20px;
-        border-radius: 15px;
-        padding: 20px 30px;
-        font-size: 2rem;
-        background-color: #fff;
-        color: gray;
-        border: none;
-        cursor: pointer;
-      }
-      .next-button:hover,
-      .restart-button:hover {
-        background-color: #ddd;
-      }
-
+      /* 홈 버튼 = 텐트 */
       .home-button {
         position: fixed;
-        bottom: 15px;
-        left: 20px;
-        padding: 10px 20px;
-        font-size: 3rem;
-        background-color: #fff;
-        border: none;
-        border-radius: 10px;
+        bottom: 24px;
+        left: 24px;
+        width: 68px;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        background: var(--cream);
+        border: 4px solid var(--wood);
+        border-radius: 20px;
         cursor: pointer;
         text-decoration: none;
+        box-shadow: 0 5px 0 rgba(0, 0, 0, 0.15);
+        transition: transform 0.12s ease;
+        z-index: 3;
       }
       .home-button:hover {
-        background-color: #1976d2;
-        color: white;
+        transform: translateY(-3px) rotate(-4deg);
       }
 
-      /* 숫자 버튼 컨테이너 */
-      #numberButtons {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 40px;
+      @media (prefers-reduced-motion: reduce) {
+        .reveal-panel,
+        .start-card,
+        .word-display.pop,
+        .star {
+          animation: none;
+        }
       }
     </style>
   </head>
   <body>
-    <a href="start.html" class="home-button">🏠</a>
+    <div class="container">
+      <span class="star">⭐️</span>
+      <span class="star">✨</span>
+      <span class="star">⭐️</span>
+      <span class="star">✨</span>
+      <span class="star">🌙</span>
+      <span class="star">⭐️</span>
 
-    <div id="numberButtons">
-      <button class="number-button" onclick="startGame(3)">3</button>
-      <button class="number-button" onclick="startGame(5)">5</button>
-      <button class="number-button" onclick="startGame(7)">7</button>
-      <button class="number-button" onclick="startGame(10)">10</button>
+      <!-- 시작 화면 -->
+      <section id="start-screen" class="screen">
+        <h1 class="title">🎤 이어말하기 !</h1>
+        <div class="start-card">
+          <label class="field-label" for="teamNameInput">팀 이름</label>
+          <input
+            id="teamNameInput"
+            class="team-input"
+            type="text"
+            placeholder="예: 1팀"
+            maxlength="14"
+          />
+          <p class="field-label">몇 문제에 도전할까요?</p>
+          <div class="count-buttons">
+            <button class="count-btn" onclick="startGame(4)">4</button>
+            <button class="count-btn" onclick="startGame(5)">5</button>
+            <button class="count-btn" onclick="startGame(8)">8</button>
+            <button class="count-btn" onclick="startGame(10)">10</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 게임 화면 -->
+      <section id="game-screen" class="screen hidden">
+        <div class="hud">
+          <span id="teamLabel"></span>
+          <span id="progressLabel"></span>
+          <span id="scoreLabel"></span>
+        </div>
+
+        <div class="word-display" id="wordDisplay"></div>
+
+        <div class="game-controls">
+          <button
+            id="btnCorrect"
+            class="side-btn correct-btn"
+            onclick="answer(true)"
+          >
+            ⚪️
+          </button>
+          <button
+            id="btnWrong"
+            class="side-btn wrong-btn"
+            onclick="answer(false)"
+          >
+            ❌
+          </button>
+        </div>
+
+        <div id="reveal-panel" class="reveal-panel hidden">
+          <p id="reveal-result" class="reveal-result"></p>
+          <p id="reveal-sub" class="reveal-sub"></p>
+          <button id="continueBtn" class="continue-btn"></button>
+        </div>
+      </section>
+
+      <!-- 결과 화면 -->
+      <section id="result-screen" class="screen hidden">
+        <h1 class="title">🏁 결과</h1>
+        <div class="result-card">
+          <p id="resultTeam"></p>
+          <p id="resultScore"></p>
+          <p id="resultDetail"></p>
+        </div>
+        <div class="result-buttons">
+          <button class="count-btn" onclick="retrySameTeam()">
+            같은 팀 다시
+          </button>
+          <button class="count-btn" onclick="resetAll()">처음부터</button>
+        </div>
+        <div id="leaderboard" class="leaderboard"></div>
+      </section>
+
+      <a href="start.html" class="home-button">⛺️</a>
     </div>
-
-    <div class="word-display" id="wordDisplay"></div>
-
-    <button
-      id="nextBtn"
-      class="next-button"
-      onclick="showNextWord()"
-      style="display: none"
-    >
-      ▶︎
-    </button>
-    <button
-      id="restartBtn"
-      class="restart-button"
-      onclick="restartGame()"
-      style="display: none"
-    >
-      ⭐️
-    </button>
 
     <script>
       const wordList = [
@@ -155,104 +563,172 @@
         "하와이안",
         "딸기우유",
         "레몬에이드",
+        "우유부단",
+        "이심전심",
+        "자수성가",
+        "팔방미인",
+        "부대찌개",
+        "계란말이",
+        "타코야키",
+        "마라샹궈",
+        "회전초밥",
+        "도토리묵",
+        "아메리카노",
+        "카페라떼",
+        "스마트폰",
+        "요가매트",
+        "워터파크",
+        "초등학교",
+        "놀이공원",
+        "지하철역",
+        "반려동물",
       ];
 
-      let selectedCount = 0;
+      let quizPool = [];
       let currentIndex = 0;
-      let currentRound = 0;
-      const maxRounds = 3;
+      let score = 0;
+      let teamName = "참가팀";
+      let leaderboard = []; // 세션 동안 쌓이는 팀별 기록
 
-      let remainingIndexes = [];
-      let currentRoundWords = [];
+      const $ = (id) => document.getElementById(id);
 
-      const wordDisplay = document.getElementById("wordDisplay");
-      const nextBtn = document.getElementById("nextBtn");
-      const restartBtn = document.getElementById("restartBtn");
-      const numberButtons = document.getElementById("numberButtons");
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
 
-      // 처음엔 숫자 버튼만 보이고, 텍스트는 빈 상태
-      wordDisplay.textContent = "";
-
-      // 배열 섞기 함수
-      function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
+      function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
+          [a[i], a[j]] = [a[j], a[i]];
         }
+        return a;
+      }
+
+      function buildFullPool() {
+        return wordList.map((w) => ({ hint: w.slice(0, 2), full: w }));
+      }
+
+      function showScreen(id) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.add("hidden"));
+        $(id).classList.remove("hidden");
       }
 
       function startGame(count) {
-        selectedCount = count;
+        const inputVal = $("teamNameInput").value.trim();
+        teamName = inputVal || "참가팀";
+        quizPool = shuffle(buildFullPool()).slice(0, count);
         currentIndex = 0;
-        currentRound = 0;
-
-        remainingIndexes = [];
-        for (let i = 0; i < wordList.length; i++) {
-          remainingIndexes.push(i);
-        }
-        shuffleArray(remainingIndexes);
-
-        numberButtons.style.display = "none";
-        nextBtn.style.display = "inline-block";
-        restartBtn.style.display = "none";
-
-        wordDisplay.textContent = "시작해볼까?";
+        score = 0;
+        showScreen("game-screen");
+        renderQuestion();
       }
-      function showNextWord() {
-        // 첫 클릭 시 '시작해볼까?' -> 다음 클릭부터 단어 출력
-        if (wordDisplay.textContent === "시작해볼까?") {
-          wordDisplay.textContent = "";
-          currentRoundWords = remainingIndexes.splice(0, selectedCount);
-          currentIndex = 0;
-          currentRound++;
-          return;
+
+      function renderQuestion() {
+        $("reveal-panel").classList.add("hidden");
+        $("reveal-panel").classList.remove("panel-correct", "panel-wrong");
+        $("btnCorrect").classList.remove("hidden");
+        $("btnWrong").classList.remove("hidden");
+
+        const wd = $("wordDisplay");
+        wd.textContent = quizPool[currentIndex].hint;
+        wd.classList.remove("pop");
+        void wd.offsetWidth; // 리플로우로 애니메이션 재실행
+        wd.classList.add("pop");
+
+        $("teamLabel").textContent = `👥 ${teamName}`;
+        $("progressLabel").textContent =
+          `문제 ${currentIndex + 1} / ${quizPool.length}`;
+        $("scoreLabel").textContent = `정답 ${score}개`;
+      }
+
+      function answer(isCorrect) {
+        $("btnCorrect").classList.add("hidden");
+        $("btnWrong").classList.add("hidden");
+
+        const panel = $("reveal-panel");
+        panel.classList.remove("hidden");
+        panel.classList.toggle("panel-correct", isCorrect);
+        panel.classList.toggle("panel-wrong", !isCorrect);
+
+        $("reveal-result").textContent = isCorrect ? "정답! 🎉" : "땡! 😢";
+        $("reveal-sub").textContent = `제시어: ${quizPool[currentIndex].full}`;
+
+        if (isCorrect) {
+          score++;
+          $("scoreLabel").textContent = `정답 ${score}개`;
         }
 
-        // 단어 다 보여주고 다음 클릭에 문구 출력하는 상태인지 체크
-        if (currentIndex === currentRoundWords.length) {
-          // "뒤에 끝.ᐟ" 보여주기
-          wordDisplay.textContent = "게임 종료!";
-          currentIndex++; // 다음 클릭에 다음 라운드 넘어가도록 인덱스 증가
-          return;
-        }
+        const isLast = currentIndex === quizPool.length - 1;
+        const btn = $("continueBtn");
 
-        // 문구 다 보여준 후 다음 클릭 시 다음 라운드 준비
-        if (currentIndex === currentRoundWords.length + 1) {
-          if (currentRound >= maxRounds || remainingIndexes.length === 0) {
-            wordDisplay.textContent = "게임 종료!";
-            nextBtn.style.display = "none";
-            restartBtn.style.display = "inline-block";
-          } else {
-            currentRoundWords = remainingIndexes.splice(0, selectedCount);
-            currentIndex = 0;
-            currentRound++;
-            wordDisplay.textContent = "시작해볼까?";
-          }
-          return;
+        if (isCorrect && !isLast) {
+          btn.textContent = "다음 문제 ▶";
+          btn.onclick = nextQuestion;
+        } else {
+          btn.textContent = "결과 보기 🏁";
+          btn.onclick = finishGame;
         }
+      }
 
-        // 단어 출력
-        const word = wordList[currentRoundWords[currentIndex]];
-        wordDisplay.textContent = word.slice(0, 2);
+      function nextQuestion() {
         currentIndex++;
+        renderQuestion();
       }
 
-      function restartGame() {
-        // selectedCount 유지
-        currentIndex = 0;
-        currentRound = 0;
+      function finishGame() {
+        const attempted = currentIndex + 1;
+        const total = quizPool.length;
+        const stoppedEarly = attempted < total;
 
-        remainingIndexes = [];
-        for (let i = 0; i < wordList.length; i++) {
-          remainingIndexes.push(i);
+        leaderboard.unshift({
+          name: teamName,
+          score,
+          attempted,
+          total,
+          stoppedEarly,
+        });
+
+        $("resultTeam").textContent = teamName;
+        $("resultScore").textContent = `${score}문제 정답`;
+        $("resultDetail").textContent = stoppedEarly
+          ? `${attempted}번째 문제에서 탈락했어요.`
+          : score === total;
+        ("전 문제 정답! 🎉");
+
+        renderLeaderboard();
+        showScreen("result-screen");
+      }
+
+      function renderLeaderboard() {
+        const el = $("leaderboard");
+        if (leaderboard.length === 0) {
+          el.innerHTML = "";
+          return;
         }
-        shuffleArray(remainingIndexes);
+        const rows = leaderboard
+          .slice()
+          .sort((a, b) => b.score - a.score)
+          .map(
+            (r, idx) =>
+              `<div class="lb-row"><span>${idx + 1}. ${escapeHtml(r.name)}</span><span>${r.score} ${r.stoppedEarly ? " (탈락)" : ""}</span></div>`,
+          )
+          .join("");
+        el.innerHTML = `<h3 class="lb-title">🏆 팀별 기록</h3>${rows}`;
+      }
 
-        currentRoundWords = [];
-        wordDisplay.textContent = "시작해볼까?";
-        numberButtons.style.display = "none";
-        nextBtn.style.display = "inline-block";
-        restartBtn.style.display = "none";
+      function retrySameTeam() {
+        showScreen("start-screen");
+        $("teamNameInput").value = teamName;
+      }
+
+      function resetAll() {
+        showScreen("start-screen");
+        $("teamNameInput").value = "";
       }
     </script>
   </body>

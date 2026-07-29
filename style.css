@@ -11,12 +11,35 @@
   font-weight: normal;
   font-style: normal;
 }
+@import url("https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&display=swap");
+
+:root {
+  --sky-top: #0c1b45;
+  --sky-mid: #1e3f86;
+  --sky-low: #7fb2ec;
+  --cream: #fbf7ee;
+  --wood: #dfe7f5;
+  --fire: #ff9a52;
+  --fire-dark: #e2702a;
+  --tent: #4a90d9;
+  --tent-dark: #2f6cae;
+  --star: #ffe36b;
+  --ink: #2c3556;
+}
+
 body {
-  background: linear-gradient(135deg, #30ff48, #bfecc4);
+  font-family: "Jua", sans-serif;
+  background: linear-gradient(
+    160deg,
+    var(--sky-top) 0%,
+    var(--sky-mid) 55%,
+    var(--sky-low) 100%
+  );
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
+  color: var(--ink);
 }
 
 .container {
@@ -36,8 +59,6 @@ body {
   gap: 10px; /* h1과 gif 사이 간격 */
   margin-bottom: 100px;
 }
-
-/* 타이핑 애니메이션 */
 .title {
   font-family: "DungGeunMo";
   font-size: 18rem;
@@ -47,40 +68,53 @@ body {
   overflow: hidden;
   border-right: 4px solid #374151; /* 커서 효과 */
   width: 0;
-  animation: typing 2s steps(4, end) forwards, blinkCaret 0.7s step-end infinite;
+  animation:
+    typing 2s steps(4, end) forwards,
+    blinkCaret 0.7s step-end infinite;
 }
-
 .title-gif {
   width: 200px; /* GIF 크기 조절 */
   height: 200px;
   rotate: 180deg;
 }
+
 .start-button {
   opacity: 0;
   pointer-events: none;
-  font-family: "DungGeunMo";
+  font-family: "Jua", sans-serif;
   display: inline-block;
   padding: 30px 150px;
   font-size: 6rem;
+  color: #fff;
+  border: none;
   transform: translateY(10px);
   text-decoration: none;
-  border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.5s ease;
+  border-radius: 28px;
+  box-shadow: 0 10px 0 var(--fire-dark);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.5s ease;
   animation: pulse 1.8s infinite;
 }
 .show-button {
   opacity: 1;
   pointer-events: auto;
-  animation: slideUp 1s ease-out forwards, pulse 2.5s infinite;
-  animation-delay: 0s, 1.6s; /* slideUp 즉시 시작, pulse는 slideUp 끝나고 0.6초 후 */
+  animation:
+    slideUp 1s ease-out forwards,
+    pulse 2.5s infinite;
+  animation-delay:
+    0s, 1.6s; /* slideUp 즉시 시작, pulse는 slideUp 끝나고 0.6초 후 */
   animation-fill-mode: forwards;
 }
 
 .start-button:hover {
-  transform: scale(1.05);
-  background-color: #d0edaa;
-  box-shadow: 0 8px 20px rgba(208, 237, 170, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 13px 0 var(--fire-dark);
+}
+.start-button:active {
+  transform: translateY(7px);
+  box-shadow: 0 3px 0 var(--fire-dark);
 }
 
 @keyframes slideDown {
@@ -118,21 +152,13 @@ body {
   0%,
   100% {
     transform: scale(1);
-    background: linear-gradient(
-      135deg,
-      #ffff05,
-      #f3f393
-    ); /* 선명한 레몬 옐로우 */
-    color: #2187cf; /* 진한 그레이(글자색) */
+    background: var(--fire);
+    color: #fff;
   }
   50% {
     transform: scale(1.05);
-    background: linear-gradient(
-      135deg,
-      #ffff05,
-      #f3f393
-    ); /* 선명한 레몬 옐로우 */
-    color: #2187cf; /* 진한 그레이(글자색) */
+    background: var(--fire-dark);
+    color: #fff;
   }
 }
 
@@ -149,7 +175,7 @@ body {
 @keyframes blinkCaret {
   0%,
   100% {
-    border-color: #fff;
+    border-color: var(--star);
   }
   50% {
     border-color: transparent;
@@ -198,27 +224,36 @@ body {
   height: 120px;
   rotate: 180deg;
 }
+
 .game-button {
-  font-family: "DungGeunMo";
-  border: 2px solid #fff;
-  background-color: #b7f4b7;
-  color: #2187cf;
+  font-family: "Jua", sans-serif;
+  border: 6px solid var(--wood);
+  background-color: var(--cream);
+  color: var(--ink);
   padding: 40px 150px;
   font-size: 7rem;
   text-decoration: none;
   flex-direction: row;
-  border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 28px;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.18);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
   opacity: 0;
   transform: translateY(50px);
   animation: slideFadeUp 0.8s ease forwards;
 }
 
 .game-button:hover {
-  transform: scale(1.05);
-  background-color: #ffff80;
-  box-shadow: 0 8px 20px rgba(208, 237, 170, 0.5);
+  transform: translateY(-3px);
+  background-color: var(--tent);
+  color: #fff;
+  box-shadow: 0 13px 0 var(--tent-dark);
+}
+.game-button:active {
+  transform: translateY(7px);
+  box-shadow: 0 3px 0 var(--tent-dark);
 }
 
 /* 등장 애니메이션 순차 적용 */
