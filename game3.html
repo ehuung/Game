@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CAMPING !</title>
+    <title>Game</title>
     <link rel="icon" href="./favicon.ico" />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&display=swap");
@@ -199,11 +199,14 @@
         box-shadow: 0 2px 0 var(--tent-dark);
       }
 
-      /* 장르 버튼 (2x2 카드형) */
+      /* 장르 버튼 (2열 카드형, 마지막 버튼은 전체 폭) */
       .genre-buttons {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
+      }
+      .genre-btn.full-width {
+        grid-column: 1 / -1;
       }
       .genre-btn {
         font-family: inherit;
@@ -536,6 +539,12 @@
             <button class="genre-btn" onclick="selectGenre('slang')">
               💬 신조어
             </button>
+            <button
+              class="genre-btn full-width"
+              onclick="selectGenre('variety')"
+            >
+              🎉 예능
+            </button>
           </div>
         </div>
       </section>
@@ -584,7 +593,7 @@
             class="side-btn correct-btn"
             onclick="answer(true)"
           >
-            ⭕️
+            ⚪️
           </button>
           <button
             id="btnWrong"
@@ -628,6 +637,7 @@
         movie: {
           label: "🎬 영화",
           words: [
+            "눈동자",
             "명량",
             "극한직업",
             "신과함께",
@@ -653,6 +663,9 @@
         drama: {
           label: "📺 드라마",
           words: [
+            "김부장",
+            "아파트",
+            "동궁",
             "도깨비",
             "시그널",
             "이태원클라쓰",
@@ -709,20 +722,38 @@
             "중꺽마",
             "이왜진",
             "갓생",
-            "인싸",
-            "아싸",
-            "워라벨",
-            "존버",
-            "소확행",
-            "갑분싸",
-            "사이다",
-            "흑화",
-            "팩폭",
-            "복세편살",
-            "킹받네",
-            "노잼",
-            "개꿀",
-            "잼민이",
+            "야르",
+            "샤갈",
+            "영크크",
+            "감다뒤",
+            "영포티",
+            "느좋",
+          ],
+        },
+        variety: {
+          label: "🎉 예능",
+          words: [
+            "무한도전",
+            "런닝맨",
+            "아는형님",
+            "환승연애",
+            "신서유기",
+            "솔로지옥",
+            "삼시세끼",
+            "놀라운토요일",
+            "유퀴즈온더블럭",
+            "나혼자산다",
+            "미운우리새끼",
+            "전지적참견시점",
+            "코미디빅리그",
+            "언더커버",
+            "흑백요리사",
+            "골때리는그녀들",
+            "피의게임",
+            "끼리끼리",
+            "불량연애",
+            "냉장고를부탁해",
+            "모태솔로지만연애는하고싶어",
           ],
         },
       };
@@ -840,9 +871,7 @@
         panel.classList.toggle("panel-correct", isCorrect);
         panel.classList.toggle("panel-wrong", !isCorrect);
 
-        $("reveal-result").textContent = isCorrect
-          ? "정답입니다! 🎉"
-          : "땡! 틀렸습니다 😢";
+        $("reveal-result").textContent = isCorrect ? "정답! 🎉" : "땡! 😢";
         $("reveal-sub").textContent = `정답: ${quizPool[currentIndex].full}`;
 
         if (isCorrect) {
@@ -882,12 +911,7 @@
         });
 
         $("resultTeam").textContent = teamName;
-        $("resultScore").textContent = `${score} / ${attempted}문제 정답`;
-        $("resultDetail").textContent = stoppedEarly
-          ? `${attempted}번째 문제에서 탈락했어요.`
-          : score === total
-            ? "전 문제 정답! 완벽해요 🎉"
-            : "수고하셨습니다!";
+        $("resultScore").textContent = `${score}문제 정답`;
 
         renderLeaderboard();
         showScreen("result-screen");
@@ -905,7 +929,7 @@
           .map(
             (r, idx) => `<div class="lb-row">
               <span class="lb-name">${idx + 1}. ${escapeHtml(r.name)} <small>(${escapeHtml(r.genreLabel)})</small></span>
-              <span>${r.score} / ${r.attempted}${r.stoppedEarly ? " (탈락)" : ""}</span>
+              <span>${r.score} ${r.stoppedEarly ? " (탈락)" : ""}</span>
             </div>`,
           )
           .join("");

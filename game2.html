@@ -695,10 +695,6 @@
 
         $("resultTeam").textContent = teamName;
         $("resultScore").textContent = `${score}문제 정답`;
-        $("resultDetail").textContent = stoppedEarly
-          ? `${attempted}번째 문제에서 탈락했어요.`
-          : score === total;
-        ("전 문제 정답! 🎉");
 
         renderLeaderboard();
         showScreen("result-screen");
