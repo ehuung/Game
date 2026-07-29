@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CAMPING !</title>
+    <link rel="icon" href="./favicon.ico" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      @font-face {
+        font-family: "CookieRun-Regular";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff")
+          format("woff");
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        font-family: "CookieRun-Regular";
+        height: 100%;
+      }
+
+      .container {
+        background: linear-gradient(135deg, #e3ff2c, #bfecc4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .image-container img {
+        width: 800px;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .next-button {
+        position: fixed;
+        bottom: 15px;
+        right: 20px;
+        border-radius: 15px;
+        padding: 20px 30px;
+        font-size: 2rem;
+        background-color: #39d73e;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      .next-button:hover {
+        background-color: #45a049;
+      }
+
+      .home-button {
+        position: fixed;
+        bottom: 15px;
+        left: 20px;
+        padding: 10px 20px;
+        font-size: 3rem;
+        background-color: #39d73e;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .home-button:hover {
+        background-color: #1976d2;
+      }
+
+      .message-text {
+        font-size: 4rem;
+        width: 800px;
+        margin: 20px;
+        text-align: center;
+        color: #fff;
+        background-color: #39d73e;
+        padding: 20px;
+        border-radius: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="slideshow" class="container">
+      <div class="image-container" id="imageWrapper">
+        <img id="camping-image" src="" alt="Camping Image" />
+      </div>
+      <div id="message" class="message-text" style="display: none"></div>
+      <button id="nextBtn" class="next-button" onclick="showNext()">▶︎</button>
+      <a href="start.html" class="home-button">🏠</a>
+    </div>
+
+    <script>
+      const totalImages = 38; // 전체 이미지 개수 (예시)
+      const imageTexts = [
+        "차범근",
+        "김민재",
+        "권지용",
+        "박준형",
+        "나훈아",
+        "김혜수",
+        "유재석",
+        "도아",
+        "나문희",
+        "코끼리",
+        "김연아",
+        "조용필",
+        "신화",
+        "박보검",
+        "이병헌",
+        "김희진",
+        "싸이",
+        "워렌버핏",
+        "추성훈",
+        "안세영",
+        "최민식",
+        "장국영",
+        "김태리",
+        "주현미",
+        "안성기",
+        "제니",
+        "곽튜브",
+        "추영우",
+        "세종대왕",
+        "김수지",
+        "마크 저커버그",
+        "방탄소년단",
+        "이수근",
+        "현철",
+        "신동엽",
+      ];
+
+      let currentIndex = 0;
+      let isShowingImage = true; // 이미지 -> 텍스트 전환 여부
+
+      function showNext() {
+        const imgEl = document.getElementById("camping-image");
+        const msgEl = document.getElementById("message");
+        const imageWrapper = document.getElementById("imageWrapper");
+
+        if (currentIndex >= totalImages) {
+          // 끝
+          imageWrapper.style.display = "none";
+          msgEl.style.display = "block";
+          msgEl.textContent = "끝!";
+          document.getElementById("nextBtn").style.display = "none";
+          return;
+        }
+
+        if (isShowingImage) {
+          // 이미지 보여주기
+          imgEl.src = `images/${currentIndex + 1}.png`;
+          imgEl.style.display = "block";
+          imageWrapper.style.display = "block";
+          msgEl.style.display = "none";
+          isShowingImage = false;
+        } else {
+          // 텍스트 보여주기
+          msgEl.textContent = imageTexts[currentIndex];
+          msgEl.style.display = "block";
+          imageWrapper.style.display = "none";
+          isShowingImage = true;
+          currentIndex++; // 다음 이미지로 넘어가기
+        }
+      }
+
+      // 시작 시 첫 이미지부터
+      showNext();
+    </script>
+  </body>
+</html>
