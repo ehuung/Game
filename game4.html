@@ -13,6 +13,14 @@
         box-sizing: border-box;
       }
 
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        overflow: hidden;
+      }
+
       :root {
         --sky-top: #0c1b45;
         --sky-mid: #1e3f86;
@@ -34,6 +42,11 @@
       body {
         font-family: "Jua", sans-serif;
         color: var(--ink);
+        /* 모바일에서 화면이 스크롤로 붕 뜨는 것 방지 */
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+        touch-action: manipulation;
       }
 
       .container {
@@ -47,7 +60,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
         overflow: hidden;
         position: relative;
         padding: 24px;
@@ -131,9 +145,22 @@
         align-items: center;
         z-index: 2;
         width: 100%;
+        /* 화면 꽉 채우고 기본은 스크롤 잠금 (결과 화면만 아래에서 허용) */
+        height: 100%;
+        justify-content: center;
+        overflow: hidden;
       }
       .screen.hidden {
         display: none;
+      }
+      /* 결과 화면만: 기록이 길어지면 스크롤 허용 */
+      #result-screen {
+        justify-content: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding-top: 24px;
+        padding-bottom: 40px;
       }
 
       /* ---------- 시작 화면 ---------- */
@@ -456,6 +483,104 @@
           animation: none;
         }
       }
+
+      /* ===== 모바일 가로모드(TV 연결) 최적화 & 화면 고정 ===== */
+      /* html/body 화면에 고정 - 터치 스크롤로 붕 뜨는 현상 방지 */
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        overflow: hidden;
+        overscroll-behavior: none;
+        touch-action: manipulation;
+      }
+      /* 화면 컨테이너는 실제 보이는 높이에 딱 맞춤 */
+      .container {
+        height: 100vh;
+        height: 100dvh;
+      }
+      /* 각 화면은 꽉 채우되 기본은 스크롤 잠금 */
+      .screen {
+        height: 100%;
+        justify-content: center;
+        overflow: hidden;
+      }
+      /* 결과 화면만: 기록이 길어지면 세로 스크롤 허용 */
+      #result-screen {
+        justify-content: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* ===== 가로모드: 화면이 낮고 넓을 때 압축 ===== */
+      @media (orientation: landscape) and (max-height: 600px) {
+        .container {
+          padding: 12px;
+        }
+        .title {
+          font-size: clamp(1.4rem, 5vh, 2.2rem);
+          margin-bottom: 12px;
+        }
+        /* 카드류 여백/패딩 축소 */
+        .start-card {
+          padding: clamp(16px, 4vh, 32px);
+          border-radius: 24px;
+        }
+        .team-input {
+          margin-bottom: 14px;
+          padding: 10px 14px;
+        }
+        .field-label {
+          margin-bottom: 8px;
+        }
+        .hud {
+          margin-bottom: 12px;
+          padding: 8px 18px;
+        }
+        .count-btn {
+          padding: 12px 20px;
+        }
+        /* 게임 화면 요소 압축 */
+        .word-display {
+          font-size: clamp(2.2rem, 16vh, 5rem);
+          padding: clamp(20px, 5vh, 44px) clamp(28px, 6vw, 60px);
+          margin-bottom: 16px;
+          border-radius: 24px;
+        }
+        .image-container img {
+          max-height: 60vh;
+        }
+        .image-hidden {
+          min-height: 34vh;
+        }
+        .reveal-panel {
+          margin-top: 12px;
+          padding: clamp(14px, 3vh, 26px) 22px;
+        }
+        .reveal-name {
+          margin-bottom: 12px;
+        }
+        .side-btn {
+          width: clamp(56px, 12vh, 84px);
+          height: clamp(56px, 12vh, 84px);
+        }
+        /* 홈 버튼 살짝 작게 */
+        .home-button {
+          width: 54px;
+          height: 54px;
+          bottom: 14px;
+          left: 14px;
+          font-size: 1.6rem;
+        }
+        /* 별은 가로모드에서 좀 옅게 */
+        .star {
+          opacity: 0.6;
+        }
+      }
     </style>
   </head>
   <body>
@@ -657,6 +782,7 @@
         const img = $("quiz-image");
         img.classList.add("is-answer");
         img.src = quizPool[currentIndex].a;
+        $("stageLabel").textContent = "정답 공개! ✅";
 
         const panel = $("reveal-panel");
         panel.classList.remove("hidden");

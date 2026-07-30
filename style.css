@@ -27,6 +27,17 @@
   --ink: #2c3556;
 }
 
+/* 화면 고정 - 터치 스크롤로 붕 뜨는 현상 방지 */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
 body {
   font-family: "Jua", sans-serif;
   background: linear-gradient(
@@ -38,7 +49,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   color: var(--ink);
 }
 
@@ -47,7 +57,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   animation: fadeIn 1s ease-in-out;
 }
 
@@ -61,20 +73,20 @@ body {
 }
 .title {
   font-family: "DungGeunMo";
-  font-size: 18rem;
+  font-size: clamp(6rem, 22vw, 18rem);
   color: #ffffff;
   display: inline-block;
   white-space: nowrap; /* 한 줄로 유지 */
   overflow: hidden;
-  border-right: 4px solid #374151; /* 커서 효과 */
+  border-right: 4px solid var(--star); /* 커서 효과 */
   width: 0;
   animation:
     typing 2s steps(4, end) forwards,
     blinkCaret 0.7s step-end infinite;
 }
 .title-gif {
-  width: 200px; /* GIF 크기 조절 */
-  height: 200px;
+  width: clamp(90px, 18vw, 200px); /* GIF 크기 조절 */
+  height: clamp(90px, 18vw, 200px);
   rotate: 180deg;
 }
 
@@ -83,8 +95,8 @@ body {
   pointer-events: none;
   font-family: "Jua", sans-serif;
   display: inline-block;
-  padding: 30px 150px;
-  font-size: 6rem;
+  padding: clamp(18px, 4vh, 30px) clamp(70px, 18vw, 150px);
+  font-size: clamp(2.4rem, 8vw, 6rem);
   color: #fff;
   border: none;
   transform: translateY(10px);
@@ -199,8 +211,10 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  gap: 80px; /* 버튼 사이 간격 */
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  gap: clamp(30px, 8vh, 80px); /* 버튼 사이 간격 */
   animation: fadeIn 1.2s ease-out;
 }
 .logo-wrapper {
@@ -214,20 +228,20 @@ body {
 /* 타이핑 애니메이션 */
 .logo {
   font-family: "DungGeunMo";
-  font-size: 12rem;
+  font-size: clamp(4rem, 16vw, 12rem);
   color: #ffffff;
   white-space: nowrap; /* 한 줄로 유지 */
 }
 
 .logo-gif {
-  width: 120px; /* GIF 크기 조절 */
-  height: 120px;
+  width: clamp(70px, 12vw, 120px); /* GIF 크기 조절 */
+  height: clamp(70px, 12vw, 120px);
   rotate: 180deg;
 }
 .button-row {
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: clamp(20px, 4vw, 40px);
   flex-wrap: wrap; /* 화면 좁으면 자동 줄바꿈 */
   justify-content: center;
 }
@@ -237,8 +251,8 @@ body {
   border: 6px solid var(--wood);
   background-color: var(--cream);
   color: var(--ink);
-  padding: 40px 60px;
-  font-size: 7rem;
+  padding: clamp(24px, 5vw, 40px) clamp(36px, 6vw, 60px);
+  font-size: clamp(3.5rem, 9vw, 7rem);
   text-decoration: none;
   flex-direction: row;
   border-radius: 28px;
@@ -278,4 +292,36 @@ body {
 }
 .game-button:nth-child(5) {
   animation-delay: 1s;
+}
+
+/* ===== 가로모드(TV 연결): 화면이 낮고 넓을 때 압축 ===== */
+@media (orientation: landscape) and (max-height: 600px) {
+  .title-wrapper {
+    margin-bottom: clamp(20px, 6vh, 60px);
+  }
+  .title {
+    font-size: clamp(4rem, 26vh, 12rem);
+  }
+  .title-gif {
+    width: clamp(70px, 22vh, 140px);
+    height: clamp(70px, 22vh, 140px);
+  }
+  .logo {
+    font-size: clamp(3.5rem, 22vh, 9rem);
+  }
+  .logo-gif {
+    width: clamp(60px, 16vh, 110px);
+    height: clamp(60px, 16vh, 110px);
+  }
+  .wrapper {
+    gap: clamp(20px, 6vh, 50px);
+  }
+  .start-button {
+    padding: clamp(14px, 4vh, 26px) clamp(50px, 14vw, 120px);
+    font-size: clamp(2rem, 12vh, 4.5rem);
+  }
+  .game-button {
+    padding: clamp(18px, 5vh, 32px) clamp(28px, 5vw, 48px);
+    font-size: clamp(2.8rem, 16vh, 5.5rem);
+  }
 }
