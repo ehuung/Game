@@ -136,7 +136,7 @@
         display: none;
       }
 
-      /* ---------- 시작 화면 ---------- */
+      /* ---------- 시작 / 시간 선택 화면 ---------- */
       .start-card {
         background: var(--cream);
         border: 6px solid var(--wood);
@@ -205,6 +205,7 @@
         gap: clamp(10px, 3vw, 28px);
         flex-wrap: wrap;
         justify-content: center;
+        align-items: center;
         background: var(--cream);
         border: 4px solid var(--wood);
         border-radius: 20px;
@@ -213,6 +214,23 @@
         font-size: clamp(0.9rem, 2vw, 1.1rem);
         box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
         z-index: 2;
+      }
+      /* 타이머 라벨: 초읽기 들어가면 강조 */
+      #timerLabel {
+        color: var(--fire-dark);
+      }
+      #timerLabel.urgent {
+        color: var(--wrong-dark);
+        animation: tick 0.6s ease-in-out infinite;
+      }
+      @keyframes tick {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.18);
+        }
       }
 
       .image-container {
@@ -228,6 +246,34 @@
         border-radius: 28px;
         box-shadow: 0 14px 0 rgba(0, 0, 0, 0.18);
         display: block;
+      }
+      #quiz-image.hidden {
+        display: none;
+      }
+
+      /* 이미지가 사라졌을 때 보여줄 자리 */
+      .image-hidden {
+        width: min(680px, 82vw);
+        min-height: 40vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-align: center;
+        font-size: clamp(1.4rem, 4vw, 2rem);
+        color: var(--ink);
+        background: var(--cream);
+        border: 8px dashed var(--wood);
+        border-radius: 28px;
+        box-shadow: 0 14px 0 rgba(0, 0, 0, 0.18);
+        animation: pop 0.35s cubic-bezier(0.22, 1.4, 0.4, 1);
+      }
+      .image-hidden .big-q {
+        font-size: clamp(3rem, 10vw, 5rem);
+      }
+      .image-hidden.hidden {
+        display: none;
       }
 
       /* O / X 버튼 - 화면 양쪽 */
@@ -437,6 +483,8 @@
       @media (prefers-reduced-motion: reduce) {
         .reveal-panel,
         .start-card,
+        .image-hidden,
+        #timerLabel.urgent,
         .star {
           animation: none;
         }
@@ -452,8 +500,19 @@
       <span class="star">🌙</span>
       <span class="star">⭐️</span>
 
-      <!-- 시작 화면 -->
-      <section id="start-screen" class="screen">
+      <!-- 시간 선택 화면 (제일 처음) -->
+      <section id="time-screen" class="screen">
+        <div class="start-card">
+          <div class="count-buttons">
+            <button class="count-btn" onclick="selectTime(3)">3초</button>
+            <button class="count-btn" onclick="selectTime(5)">5초</button>
+            <button class="count-btn" onclick="selectTime(0)">무제한</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 팀 이름 / 문제 수 화면 -->
+      <section id="start-screen" class="screen hidden">
         <h1 class="title">🙄 내가 누구게 ?</h1>
         <div class="start-card">
           <label class="field-label" for="teamNameInput">팀 이름</label>
@@ -478,10 +537,15 @@
           <span id="teamLabel"></span>
           <span id="progressLabel"></span>
           <span id="scoreLabel"></span>
+          <span id="timerLabel"></span>
         </div>
 
         <div class="image-container">
           <img id="quiz-image" src="" alt="퀴즈 이미지" />
+          <div id="image-hidden" class="image-hidden hidden">
+            <span class="big-q">🤔</span>
+            <span>누구게 ~?</span>
+          </div>
         </div>
 
         <div class="game-controls">
@@ -586,6 +650,11 @@
       let teamName = "참가팀";
       let leaderboard = []; // 세션 동안 쌓이는 팀별 기록
 
+      // 시간 제한 관련 (0 = 무제한)
+      let timeLimit = 0;
+      let timerId = null;
+      let remaining = 0;
+
       const $ = (id) => document.getElementById(id);
 
       function escapeHtml(str) {
@@ -618,6 +687,59 @@
         $(id).classList.remove("hidden");
       }
 
+      // 1단계: 시간 선택 -> 팀 이름 화면으로
+      function selectTime(sec) {
+        timeLimit = sec;
+        showScreen("start-screen");
+      }
+
+      // ----- 타이머 -----
+      function clearTimer() {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function updateTimerLabel() {
+        const label = $("timerLabel");
+        if (!timeLimit) {
+          label.textContent = "⏱ 무제한";
+          label.classList.remove("urgent");
+          return;
+        }
+        label.textContent = `⏱ ${remaining}초`;
+        label.classList.toggle("urgent", remaining <= 2);
+      }
+
+      function hideImage() {
+        $("quiz-image").classList.add("hidden");
+        $("image-hidden").classList.remove("hidden");
+      }
+
+      function startTimer() {
+        clearTimer();
+        if (!timeLimit) {
+          // 무제한: 이미지 계속 표시
+          updateTimerLabel();
+          return;
+        }
+        remaining = timeLimit;
+        updateTimerLabel();
+        timerId = setInterval(() => {
+          remaining--;
+          if (remaining <= 0) {
+            remaining = 0;
+            updateTimerLabel();
+            hideImage(); // 시간 끝 -> 이미지 사라짐
+            clearTimer();
+          } else {
+            updateTimerLabel();
+          }
+        }, 1000);
+      }
+
+      // 2단계: 게임 시작
       function startGame(count) {
         const inputVal = $("teamNameInput").value.trim();
         teamName = inputVal || "참가팀";
@@ -629,18 +751,29 @@
       }
 
       function renderQuestion() {
+        clearTimer();
         $("reveal-panel").classList.add("hidden");
         $("reveal-panel").classList.remove("panel-correct", "panel-wrong");
         $("btnCorrect").classList.remove("hidden");
         $("btnWrong").classList.remove("hidden");
+
+        // 이미지 다시 보이게, 사라짐 자리 숨김
+        $("quiz-image").classList.remove("hidden");
+        $("image-hidden").classList.add("hidden");
         $("quiz-image").src = quizPool[currentIndex].img;
+
         $("teamLabel").textContent = `👥 ${teamName}`;
         $("progressLabel").textContent =
           `문제 ${currentIndex + 1} / ${quizPool.length}`;
         $("scoreLabel").textContent = `정답 ${score}개`;
+
+        startTimer(); // 이미지 노출 타이머 시작
       }
 
       function answer(isCorrect) {
+        clearTimer(); // O/X 누르면 타이머 정지
+        $("timerLabel").classList.remove("urgent");
+
         $("btnCorrect").classList.add("hidden");
         $("btnWrong").classList.add("hidden");
 
@@ -675,6 +808,7 @@
       }
 
       function finishGame() {
+        clearTimer();
         const attempted = currentIndex + 1;
         const total = quizPool.length;
         const stoppedEarly = attempted < total;
@@ -712,12 +846,15 @@
       }
 
       function retrySameTeam() {
+        // 시간 설정은 유지, 팀 이름만 채워서 문제 수 화면으로
         showScreen("start-screen");
         $("teamNameInput").value = teamName;
       }
 
       function resetAll() {
-        showScreen("start-screen");
+        // 시간 선택부터 처음부터
+        clearTimer();
+        showScreen("time-screen");
         $("teamNameInput").value = "";
       }
     </script>

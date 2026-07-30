@@ -224,13 +224,20 @@ body {
   height: 120px;
   rotate: 180deg;
 }
+.button-row {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  flex-wrap: wrap; /* 화면 좁으면 자동 줄바꿈 */
+  justify-content: center;
+}
 
 .game-button {
   font-family: "Jua", sans-serif;
   border: 6px solid var(--wood);
   background-color: var(--cream);
   color: var(--ink);
-  padding: 40px 150px;
+  padding: 40px 60px;
   font-size: 7rem;
   text-decoration: none;
   flex-direction: row;
