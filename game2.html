@@ -12,7 +12,6 @@
         padding: 0;
         box-sizing: border-box;
       }
-
       :root {
         --sky-top: #0c1b45;
         --sky-mid: #1e3f86;
@@ -30,12 +29,10 @@
         --wrong: #ff5c6c;
         --wrong-dark: #d63c4c;
       }
-
       body {
         font-family: "Jua", sans-serif;
         color: var(--ink);
       }
-
       .container {
         background: linear-gradient(
           160deg,
@@ -52,8 +49,6 @@
         position: relative;
         padding: 24px;
       }
-
-      /* 반짝이는 별들 */
       .star {
         position: fixed;
         color: var(--star);
@@ -110,8 +105,6 @@
           transform: scale(1.15);
         }
       }
-
-      /* 상단 타이틀 */
       .title {
         color: var(--cream);
         font-family: "Jua", sans-serif;
@@ -124,7 +117,6 @@
         gap: 12px;
         z-index: 2;
       }
-
       .screen {
         display: flex;
         flex-direction: column;
@@ -135,8 +127,6 @@
       .screen.hidden {
         display: none;
       }
-
-      /* ---------- 시작 화면 ---------- */
       .start-card {
         background: var(--cream);
         border: 6px solid var(--wood);
@@ -198,8 +188,11 @@
         transform: translateY(5px);
         box-shadow: 0 2px 0 var(--tent-dark);
       }
-
-      /* ---------- 게임 화면 ---------- */
+      .pool-note {
+        margin-top: 18px;
+        font-size: clamp(0.85rem, 2vw, 1rem);
+        color: var(--tent-dark);
+      }
       .hud {
         display: flex;
         gap: clamp(10px, 3vw, 28px);
@@ -214,8 +207,6 @@
         box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
         z-index: 2;
       }
-
-      /* 단어 카드 = 나무 표지판 느낌 */
       .word-display {
         font-size: clamp(3rem, 14vw, 8rem);
         font-weight: bold;
@@ -235,8 +226,6 @@
       .word-display.pop {
         animation: pop 0.45s cubic-bezier(0.22, 1.4, 0.4, 1);
       }
-
-      /* O / X 버튼 - 화면 양쪽 */
       .side-btn {
         position: fixed;
         top: 50%;
@@ -273,7 +262,6 @@
       .side-btn.hidden {
         display: none;
       }
-
       @media (max-width: 700px) {
         .side-btn {
           position: static;
@@ -289,8 +277,6 @@
           justify-content: center;
         }
       }
-
-      /* 정답 공개 패널 */
       .reveal-panel {
         width: min(480px, 82vw);
         margin-top: 22px;
@@ -347,7 +333,6 @@
         transform: translateY(4px);
         box-shadow: 0 2px 0 var(--fire-dark);
       }
-
       @keyframes pop {
         0% {
           transform: scale(0.6);
@@ -359,8 +344,6 @@
           transform: scale(1);
         }
       }
-
-      /* ---------- 결과 화면 ---------- */
       .result-card {
         background: var(--cream);
         border: 6px solid var(--wood);
@@ -416,8 +399,6 @@
       .lb-row:last-child {
         border-bottom: none;
       }
-
-      /* 홈 버튼 = 텐트 */
       .home-button {
         position: fixed;
         bottom: 24px;
@@ -440,7 +421,6 @@
       .home-button:hover {
         transform: translateY(-3px) rotate(-4deg);
       }
-
       @media (prefers-reduced-motion: reduce) {
         .reveal-panel,
         .start-card,
@@ -453,14 +433,10 @@
   </head>
   <body>
     <div class="container">
-      <span class="star">⭐️</span>
-      <span class="star">✨</span>
-      <span class="star">⭐️</span>
-      <span class="star">✨</span>
-      <span class="star">🌙</span>
-      <span class="star">⭐️</span>
+      <span class="star">⭐️</span><span class="star">✨</span
+      ><span class="star">⭐️</span> <span class="star">✨</span
+      ><span class="star">🌙</span><span class="star">⭐️</span>
 
-      <!-- 시작 화면 -->
       <section id="start-screen" class="screen">
         <h1 class="title">🎤 이어말하기 !</h1>
         <div class="start-card">
@@ -479,19 +455,16 @@
             <button class="count-btn" onclick="startGame(8)">8</button>
             <button class="count-btn" onclick="startGame(10)">10</button>
           </div>
+          <p class="pool-note" id="poolNote"></p>
         </div>
       </section>
 
-      <!-- 게임 화면 -->
       <section id="game-screen" class="screen hidden">
         <div class="hud">
-          <span id="teamLabel"></span>
-          <span id="progressLabel"></span>
-          <span id="scoreLabel"></span>
+          <span id="teamLabel"></span><span id="progressLabel"></span
+          ><span id="scoreLabel"></span>
         </div>
-
         <div class="word-display" id="wordDisplay"></div>
-
         <div class="game-controls">
           <button
             id="btnCorrect"
@@ -508,7 +481,6 @@
             ❌
           </button>
         </div>
-
         <div id="reveal-panel" class="reveal-panel hidden">
           <p id="reveal-result" class="reveal-result"></p>
           <p id="reveal-sub" class="reveal-sub"></p>
@@ -516,7 +488,6 @@
         </div>
       </section>
 
-      <!-- 결과 화면 -->
       <section id="result-screen" class="screen hidden">
         <h1 class="title">🏁 결과</h1>
         <div class="result-card">
@@ -525,9 +496,7 @@
           <p id="resultDetail"></p>
         </div>
         <div class="result-buttons">
-          <button class="count-btn" onclick="retrySameTeam()">
-            같은 팀 다시
-          </button>
+          <button class="count-btn" onclick="nextTeam()">다른 팀 ▶</button>
           <button class="count-btn" onclick="resetAll()">처음부터</button>
         </div>
         <div id="leaderboard" class="leaderboard"></div>
@@ -588,16 +557,16 @@
       let currentIndex = 0;
       let score = 0;
       let teamName = "참가팀";
-      let leaderboard = []; // 세션 동안 쌓이는 팀별 기록
+      let leaderboard = [];
+      // 세션 동안 남은 문제 풀 (팀 간 중복 방지). 소진되면 다시 채움.
+      let remainingPool = [];
 
       const $ = (id) => document.getElementById(id);
-
       function escapeHtml(str) {
         const div = document.createElement("div");
         div.textContent = str;
         return div.innerHTML;
       }
-
       function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -610,18 +579,30 @@
       function buildFullPool() {
         return wordList.map((w) => ({ hint: w.slice(0, 2), full: w }));
       }
+      function refillPool() {
+        remainingPool = shuffle(buildFullPool());
+      }
+      function drawQuestions(count) {
+        if (remainingPool.length < count) refillPool();
+        return remainingPool.slice(0, count);
+      }
+      function updatePoolNote() {
+        const note = $("poolNote");
+        if (note) note.textContent = `남은 문제 ${remainingPool.length}개`;
+      }
 
       function showScreen(id) {
         document
           .querySelectorAll(".screen")
           .forEach((s) => s.classList.add("hidden"));
         $(id).classList.remove("hidden");
+        if (id === "start-screen") updatePoolNote();
       }
 
       function startGame(count) {
         const inputVal = $("teamNameInput").value.trim();
         teamName = inputVal || "참가팀";
-        quizPool = shuffle(buildFullPool()).slice(0, count);
+        quizPool = drawQuestions(count);
         currentIndex = 0;
         score = 0;
         showScreen("game-screen");
@@ -633,13 +614,11 @@
         $("reveal-panel").classList.remove("panel-correct", "panel-wrong");
         $("btnCorrect").classList.remove("hidden");
         $("btnWrong").classList.remove("hidden");
-
         const wd = $("wordDisplay");
         wd.textContent = quizPool[currentIndex].hint;
         wd.classList.remove("pop");
-        void wd.offsetWidth; // 리플로우로 애니메이션 재실행
+        void wd.offsetWidth;
         wd.classList.add("pop");
-
         $("teamLabel").textContent = `👥 ${teamName}`;
         $("progressLabel").textContent =
           `문제 ${currentIndex + 1} / ${quizPool.length}`;
@@ -649,23 +628,18 @@
       function answer(isCorrect) {
         $("btnCorrect").classList.add("hidden");
         $("btnWrong").classList.add("hidden");
-
         const panel = $("reveal-panel");
         panel.classList.remove("hidden");
         panel.classList.toggle("panel-correct", isCorrect);
         panel.classList.toggle("panel-wrong", !isCorrect);
-
         $("reveal-result").textContent = isCorrect ? "정답! 🎉" : "땡! 😢";
         $("reveal-sub").textContent = `제시어: ${quizPool[currentIndex].full}`;
-
         if (isCorrect) {
           score++;
           $("scoreLabel").textContent = `정답 ${score}개`;
         }
-
         const isLast = currentIndex === quizPool.length - 1;
         const btn = $("continueBtn");
-
         if (isCorrect && !isLast) {
           btn.textContent = "다음 문제 ▶";
           btn.onclick = nextQuestion;
@@ -681,10 +655,14 @@
       }
 
       function finishGame() {
-        const attempted = currentIndex + 1;
+        const attempted = currentIndex + 1; // 실제로 나온 문제 수
         const total = quizPool.length;
         const stoppedEarly = attempted < total;
-
+        // 실제로 나온 문제만 풀에서 제거 (안 나온 건 남음)
+        const usedWords = new Set(
+          quizPool.slice(0, attempted).map((q) => q.full),
+        );
+        remainingPool = remainingPool.filter((p) => !usedWords.has(p.full));
         leaderboard.unshift({
           name: teamName,
           score,
@@ -692,10 +670,8 @@
           total,
           stoppedEarly,
         });
-
         $("resultTeam").textContent = teamName;
         $("resultScore").textContent = `${score}문제 정답`;
-
         renderLeaderboard();
         showScreen("result-screen");
       }
@@ -717,15 +693,26 @@
         el.innerHTML = `<h3 class="lb-title">🏆 팀별 기록</h3>${rows}`;
       }
 
-      function retrySameTeam() {
-        showScreen("start-screen");
-        $("teamNameInput").value = teamName;
-      }
-
-      function resetAll() {
+      // 다른 팀: 남은 풀 유지(중복 제외), 기록 유지, 팀 이름만 새로
+      function nextTeam() {
         showScreen("start-screen");
         $("teamNameInput").value = "";
+        $("teamNameInput").focus();
       }
+
+      // 처음부터: 모두 초기화
+      function resetAll() {
+        refillPool();
+        leaderboard = [];
+        renderLeaderboard();
+        score = 0;
+        currentIndex = 0;
+        teamName = "참가팀";
+        $("teamNameInput").value = "";
+        showScreen("start-screen");
+      }
+
+      refillPool();
     </script>
   </body>
 </html>
